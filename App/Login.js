@@ -1,26 +1,46 @@
-'use strict'
-var { AppRegistry, StyleSheet, Text, View, Image, TextInput, TouchableHighlight
-} = React;
+import React from 'react';
+import buffer from 'buffer'
+import { Component } from 'react'
+import {
+    AppRegistry, StyleSheet, Text, View, Image, TextInput, TouchableHighlight,
+} from 'react-native'
 
-var Login = React.createClass({
+class Login extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+        }
+    }
     render() {
+        var
         return (
             <View style={loginStyles.container}>
                 <Image style={loginStyles.logo} source={require('../assets/octocat.jpg')} />
                 <Text style={loginStyles.heading}>Github Browser</Text>
-                <TextInput style={loginStyles.input} placeholder="Github Username" />
-                <TextInput style={loginStyles.input} placeholder="Github Password" secureTextEntry="true" />
-                <TouchableHighlight style={loginStyles.button}>
-                    <Text style={loginStyles.buttonText}></Text>
+                <TextInput onChangeText={(text) => this.setState({ username: text })} style={loginStyles.input} placeholder="Github Username" />
+                <TextInput style={loginStyles.input} onChangeText={(text) => this.setState({ password: text })} placeholder="Github Password" secureTextEntry />
+                <TouchableHighlight onPress={this.onLoginPressed.bind(this)} style={loginStyles.button}>
+                    <Text style={loginStyles.buttonText}>Log In</Text>
                 </TouchableHighlight>
+
             </View>
         )
     }
-})
+    onLoginPressed() {
+        var b = new buffer.Buffer(this.state.username + ':' + this.state.password)
+        var encodedAuth = b.toString('base64');
+        fetch('https://api.github.com/user/', {
+            headers: { 'Authorization': 'Basic' + encodedAuth }
+        }).then((response) => {
+            return response.json()
+        }).then((results) => {
+            console.log(results)
+        }).catch(e => console.log(e))
+    }
+}
 
 var loginStyles = StyleSheet.create({
     container: {
-        backgroundColor: '#333',
         flex: 1,
         paddingTop: 40,
         alignItems: "center",
@@ -37,22 +57,30 @@ var loginStyles = StyleSheet.create({
     input: {
         height: 50,
         marginTop: 10,
+        alignSelf: 'stretch',
         padding: 4,
         fontSize: 18,
         borderWidth: 1,
-        borderColor: '#48bbec'
+        borderColor: '#48bbec',
+        borderRadius: 0,
+        color: '#40BBEC'
     },
     button: {
         height: 50,
         backgroundColor: '#48BBEC',
         alignSelf: 'stretch',
         marginTop: 10,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5
     },
     buttonText: {
         fontSize: 22,
         color: '#FFF',
         alignSelf: 'center'
+    },
+    loader: {
+        marginTop: 20
     }
 })
 
