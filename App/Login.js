@@ -4,7 +4,11 @@ import { Component } from 'react'
 import {
     AppRegistry, StyleSheet, Text, View, Image, TextInput, TouchableHighlight,
 } from 'react-native'
-
+// import Axios from 'axios'
+// const GitHubApi = Axios.create({
+//     baseURL: 'https://api.github.com/user',
+//     withCredentials: true
+// })
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -12,7 +16,6 @@ class Login extends Component {
         }
     }
     render() {
-        var
         return (
             <View style={loginStyles.container}>
                 <Image style={loginStyles.logo} source={require('../assets/octocat.jpg')} />
@@ -26,12 +29,12 @@ class Login extends Component {
             </View>
         )
     }
-    onLoginPressed() {
+     onLoginPressed() {
+        
         var b = new buffer.Buffer(this.state.username + ':' + this.state.password)
-        var encodedAuth = b.toString('base64');
-        fetch('https://api.github.com/user/', {
-            headers: { 'Authorization': 'Basic' + encodedAuth }
-        }).then((response) => {
+        var encodedAuth = b.toString();
+        console.log(encodedAuth)
+        fetch('https://api.github.com/user', { headers: { 'Authorization': 'Basic' + encodedAuth } }).then((response) => {
             return response.json()
         }).then((results) => {
             console.log(results)
@@ -71,8 +74,8 @@ var loginStyles = StyleSheet.create({
         alignSelf: 'stretch',
         marginTop: 10,
         justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 5
+        alignItems: 'center'
+        
     },
     buttonText: {
         fontSize: 22,
