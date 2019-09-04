@@ -29,12 +29,12 @@ class Login extends Component {
             </View>
         )
     }
-     onLoginPressed() {
-        
+    onLoginPressed() {
+
         var b = new buffer.Buffer(this.state.username + ':' + this.state.password)
-        var encodedAuth = b.toString();
+        var encodedAuth = b.toString('base64');
         console.log(encodedAuth)
-        fetch('https://api.github.com/user', { headers: { 'Authorization': 'Basic' + encodedAuth } }).then((response) => {
+        fetch('https://api.github.com/user', { headers: { 'Authorization': 'Basic ' + encodedAuth } }).then((response) => {
             return response.json()
         }).then((results) => {
             console.log(results)
@@ -75,7 +75,7 @@ var loginStyles = StyleSheet.create({
         marginTop: 10,
         justifyContent: 'center',
         alignItems: 'center'
-        
+
     },
     buttonText: {
         fontSize: 22,
