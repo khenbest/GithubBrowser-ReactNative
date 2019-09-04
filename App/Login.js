@@ -16,6 +16,13 @@ class Login extends Component {
         }
     }
     render() {
+        let errorController = <View />;
+        if (!this.state.success && this.state.badCredentials) {
+            errorController = <Text style={loginStyles.error}>That username and password combination did not work.</Text>;
+        }
+        if (!this.state.success && this.state.unknownError) {
+            errorController = <Text style={loginStyles.error}>We're sorry, there has been an unknown error.</Text>;
+        }
         return (
             <View style={loginStyles.container}>
                 <Image style={loginStyles.logo} source={require('../assets/octocat.jpg')} />
@@ -26,19 +33,19 @@ class Login extends Component {
                     <Text style={loginStyles.buttonText}>Log In</Text>
                 </TouchableHighlight>
 
+                {errorController}
             </View>
         )
     }
     onLoginPressed() {
 
-        var b = new buffer.Buffer(this.state.username + ':' + this.state.password)
-        var encodedAuth = b.toString('base64');
-        console.log(encodedAuth)
-        fetch('https://api.github.com/user', { headers: { 'Authorization': 'Basic ' + encodedAuth } }).then((response) => {
-            return response.json()
-        }).then((results) => {
-            console.log(results)
-        }).catch(e => console.log(e))
+        let authService = require('./AuthService');
+        authService.login({
+            username: this.state.username,
+            password: this.state.password
+        }, (results) => {
+            this.setState(results);
+        })
     }
 }
 
@@ -84,6 +91,10 @@ var loginStyles = StyleSheet.create({
     },
     loader: {
         marginTop: 20
+    },
+    error: {
+        color: 'red',
+        paddingTop: 10
     }
 })
 
